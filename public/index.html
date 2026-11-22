@@ -2,24 +2,24 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
   <meta name="referrer" content="no-referrer" />
   <title>PotaSegura — Iniciar Sesión</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-8 font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <main class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-7 sm:p-8 shadow-2xl text-white">
+  <main class="bg-slate-800/95 backdrop-blur border border-slate-700/80 rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl text-white">
     <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600 text-white font-bold text-lg mb-3 shadow">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600 text-white font-bold text-lg mb-3 shadow-lg shadow-blue-600/30">
         PS
       </div>
-      <h1 class="text-lg font-bold text-white">PotaSegura — Control Sanitario</h1>
+      <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">PotaSegura — Control Sanitario</h1>
       <p class="text-xs text-slate-300 mt-1">Ingresa con tu cuenta de comerciante o inspector municipal</p>
     </div>
 
-    <div id="alertBanner" class="hidden mb-4 p-3 rounded-xl bg-red-500/15 border border-red-400/40 text-red-200 text-xs font-medium"></div>
+    <div id="alertBanner" class="hidden mb-4 p-3.5 rounded-xl bg-red-500/15 border border-red-400/40 text-red-200 text-xs font-medium"></div>
 
     <form id="loginForm" class="space-y-4" autocomplete="off">
       <div>
@@ -32,7 +32,7 @@
           required
           maxlength="120"
           placeholder="usuario@dominio.pe"
-          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm sm:text-base placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition min-h-[46px]"
         />
       </div>
 
@@ -46,25 +46,25 @@
           required
           maxlength="128"
           placeholder="••••••••••••"
-          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm sm:text-base placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition min-h-[46px]"
         />
       </div>
 
-      <div id="loginError" class="hidden p-3 rounded-xl bg-red-500/15 border border-red-400/40 text-red-200 text-xs font-medium"></div>
+      <div id="loginError" class="hidden p-3.5 rounded-xl bg-red-500/15 border border-red-400/40 text-red-200 text-xs font-medium leading-relaxed"></div>
 
       <button
         type="submit"
         id="submitBtn"
-        class="w-full py-3 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-500 text-white shadow-lg transition cursor-pointer disabled:opacity-60"
+        class="w-full py-3.5 px-4 rounded-xl font-bold text-sm sm:text-base bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white shadow-lg shadow-blue-600/30 transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[46px]"
       >
         Iniciar Sesión
       </button>
     </form>
 
-    <div class="mt-6 pt-5 border-t border-slate-700 text-center">
+    <div class="mt-6 pt-5 border-t border-slate-700/70 text-center">
       <a
         href="ciudadano.html"
-        class="inline-block w-full py-2.5 px-4 rounded-xl bg-slate-700/70 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition"
+        class="inline-block w-full py-3 px-4 rounded-xl bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm transition min-h-[44px] flex items-center justify-center"
       >
         Consulta pública de puesto para comensales
       </a>
@@ -84,6 +84,38 @@
       const form = document.getElementById("loginForm");
       const errorBox = document.getElementById("loginError");
       const submitBtn = document.getElementById("submitBtn");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+
+      let lockoutTimer = null;
+
+      function startLockoutCountdown(seconds) {
+        if (lockoutTimer) clearInterval(lockoutTimer);
+        let rem = seconds;
+        submitBtn.disabled = true;
+        emailInput.disabled = true;
+        passwordInput.disabled = true;
+
+        const updateBtn = () => {
+          submitBtn.textContent = `Bloqueado por seguridad (${rem}s)`;
+        };
+        updateBtn();
+
+        lockoutTimer = setInterval(() => {
+          rem -= 1;
+          if (rem <= 0) {
+            clearInterval(lockoutTimer);
+            lockoutTimer = null;
+            submitBtn.disabled = false;
+            emailInput.disabled = false;
+            passwordInput.disabled = false;
+            submitBtn.textContent = "Iniciar Sesión";
+            errorBox.classList.add("hidden");
+          } else {
+            updateBtn();
+          }
+        }, 1000);
+      }
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -91,16 +123,21 @@
         submitBtn.disabled = true;
         submitBtn.textContent = "Verificando...";
 
-        const email = document.getElementById("emailInput").value;
-        const pass = document.getElementById("passwordInput").value;
+        const email = emailInput.value;
+        const pass = passwordInput.value;
 
         const result = await authenticateUser(email, pass);
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Iniciar Sesión";
 
         if (!result.ok) {
           errorBox.textContent = result.error;
           errorBox.classList.remove("hidden");
+
+          if (result.bloqueado && result.segundos_restantes > 0) {
+            startLockoutCountdown(result.segundos_restantes);
+          } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Iniciar Sesión";
+          }
           return;
         }
 

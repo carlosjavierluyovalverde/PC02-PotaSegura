@@ -73,6 +73,30 @@ export async function onRequestPost(context) {
       );
     }
 
+    await env.DB.prepare(
+      "CREATE TABLE IF NOT EXISTS control_intentos (email TEXT PRIMARY KEY, intentos INTEGER DEFAULT 0, bloqueado_hasta INTEGER DEFAULT 0)"
+    ).run();
+
+    const now = Date.now();
+    const control = await env.DB.prepare(
+      "SELECT intentos, bloqueado_hasta FROM control_intentos WHERE email = ?1"
+    )
+      .bind(email)
+      .first();
+
+    if (control && control.bloqueado_hasta && now < control.bloqueado_hasta) {
+      const restantesSegundos = Math.ceil((control.bloqueado_hasta - now) / 1000);
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: `Cuenta bloqueada temporalmente por exceso de intentos fallidos. Espere ${restantesSegundos} segundos para volver a intentar.`,
+          bloqueado: true,
+          segundos_restantes: restantesSegundos
+        }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const passwordHash = await sha256Hex(password);
     const user = await env.DB.prepare(
       "SELECT id, email, nombre, rol, dni FROM usuarios WHERE LOWER(email) = ?1 AND password_hash = ?2 LIMIT 1"
@@ -81,10 +105,43 @@ export async function onRequestPost(context) {
       .first();
 
     if (!user) {
+      const prevIntentos = control ? Number(control.intentos || 0) : 0;
+      const nuevosIntentos = prevIntentos + 1;
+      const maxIntentos = 5;
+      let bloqueadoHasta = 0;
+      let mensajeError = `Credenciales invalidas. Intento fallido ${nuevosIntentos} de ${maxIntentos}.`;
+
+      if (nuevosIntentos >= maxIntentos) {
+        bloqueadoHasta = now + 180000;
+        mensajeError = "Demasiados intentos fallidos. Su cuenta ha sido bloqueada temporalmente por 3 minutos por seguridad.";
+      }
+
+      await env.DB.prepare(
+        "INSERT INTO control_intentos (email, intentos, bloqueado_hasta) VALUES (?1, ?2, ?3) ON CONFLICT(email) DO UPDATE SET intentos = ?2, bloqueado_hasta = ?3"
+      )
+        .bind(email, nuevosIntentos, bloqueadoHasta)
+        .run();
+
+      const statusCode = nuevosIntentos >= maxIntentos ? 429 : 401;
       return new Response(
-        JSON.stringify({ ok: false, error: "Credenciales invalidas o acceso no autorizado." }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({
+          ok: false,
+          error: mensajeError,
+          intentos: nuevosIntentos,
+          max_intentos: maxIntentos,
+          bloqueado: nuevosIntentos >= maxIntentos,
+          segundos_restantes: nuevosIntentos >= maxIntentos ? 180 : 0
+        }),
+        { status: statusCode, headers: { "Content-Type": "application/json" } }
       );
+    }
+
+    if (control && (control.intentos > 0 || control.bloqueado_hasta > 0)) {
+      await env.DB.prepare(
+        "UPDATE control_intentos SET intentos = 0, bloqueado_hasta = 0 WHERE email = ?1"
+      )
+        .bind(email)
+        .run();
     }
 
     const payloadObj = {
