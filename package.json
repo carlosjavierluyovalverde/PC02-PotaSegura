@@ -1,0 +1,19 @@
+{
+  "name": "potasegura",
+  "version": "1.0.0",
+  "description": "Plataforma Municipal de Trazabilidad, Cadena de Frio y Fiscalizacion Sanitaria de Ceviche de Pota",
+  "private": true,
+  "scripts": {
+    "build": "node -e \"const fs=require('fs'); ['public/index.html','public/comerciante.html','public/inspector.html','public/ciudadano.html','public/js/app.js','schema.sql','wrangler.toml'].forEach(f=>{if(!fs.existsSync(f))throw new Error('Missing '+f)}); console.log('Build & Static Asset Integrity Check Passed.');\"",
+    "test": "pytest -v"
+  },
+  "keywords": [
+    "potasegura",
+    "sanipes",
+    "cloudflare-pages",
+    "cloudflare-d1",
+    "devsecops"
+  ],
+  "author": "Carlos Javier Luyo Valverde",
+  "license": "MIT"
+}
