@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <title>Modulo de Fiscalizacion Sanitaria Municipal — PotaSegura</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="hidden bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+  <header class="bg-emerald-950 text-white border-b-4 border-emerald-500 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-600 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Modulo Aislado: Fiscalizacion Sanitaria</span>
+          <span id="inspectorRoleBadge" class="bg-slate-800 text-emerald-200 text-xs font-mono px-2.5 py-0.5 rounded border border-emerald-700">ROL: INSPECTOR</span>
+        </div>
+        <h1 class="text-xl font-bold mt-1">Termometria In Situ (&lt; 5.0 C), Control de Semaforo y Actas Digitales</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="inspectorNameDisplay" class="text-xs text-slate-200 font-medium"></span>
+        <a href="comerciante.html" id="adminSwitchLink" class="hidden bg-blue-700 hover:bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded transition">
+          Vista Comerciante
+        </a>
+        <a href="ciudadano.html" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded transition">
+          Vista Ciudadano
+        </a>
+        <button onclick="clearActiveSession()" class="bg-red-700 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded transition">
+          Cerrar Sesion
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <section class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold uppercase text-emerald-700">EP-03: Operativo en Via Publica (HU-07 / HU-08 / HU-09)</span>
+          <h2 class="text-base font-bold text-slate-900 mt-0.5">Verificacion de Codigo QR y Medicion Termometrica</h2>
+        </div>
+
+        <form id="actaForm" class="space-y-4">
+          <div>
+            <label for="selectPuesto" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              1. Escaneo / Seleccion de Puesto Ambulante (HU-07)
+            </label>
+            <select id="selectPuesto" class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-lg bg-slate-50 font-semibold">
+              <option value="PUESTO-VMT-042">PUESTO-VMT-042 — Luis Quispe (Don Lucho - Zona A-12)</option>
+              <option value="PUESTO-VES-019">PUESTO-VES-019 — Rosaura Huaman (El Muelle - Zona B-04)</option>
+              <option value="PUESTO-SJM-007">PUESTO-SJM-007 — Pedro Condori (Ceviche SJM - Zona C-02)</option>
+            </select>
+          </div>
+
+          <div id="puestoResumenBox" class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Carnet Sanitario:</span>
+              <span id="infoCarnet" class="font-bold text-slate-800">CS-MUNI-2026-8841 (VIGENTE)</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Firma QR HMAC:</span>
+              <span id="infoHmac" class="font-mono text-emerald-700">INTEGRIDAD VERIFICADA</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Semaforo Actual:</span>
+              <span id="infoSemaforoActual" class="font-bold text-emerald-700">VERDE</span>
+            </div>
+          </div>
+
+          <div>
+            <label for="tempInput" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              2. Temperatura Interna del Marisco Crudo (C) — Termometro Infrarrojo
+            </label>
+            <input
+              type="number"
+              id="tempInput"
+              step="0.1"
+              min="-5"
+              max="35"
+              required
+              value="3.4"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg font-mono font-bold"
+            />
+          </div>
+
+          <div id="dictamenPreviewBox" class="p-4 rounded-lg border bg-emerald-50 border-emerald-300 text-xs space-y-1">
+            <span class="block font-bold uppercase text-slate-600">Dictamen Automatico de Inocuidad:</span>
+            <p id="dictamenPreviewText" class="text-sm font-bold text-emerald-900">
+              Verificado Conforme (&lt; 5.0 C — Cadena de Frio Garantizada)
+            </p>
+          </div>
+
+          <div>
+            <label for="obsInput" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              3. Observaciones de Higiene y Manipulacion en Campo
+            </label>
+            <textarea
+              id="obsInput"
+              rows="3"
+              required
+              class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"
+            >Inspeccion inopinada en via publica. Marisco crudo sobre cama de hielo escamado 1:1, manipulador con guantes de nitrilo y solucion clorada desinfectante.</textarea>
+          </div>
+
+          <div id="actaFeedback" class="hidden p-3 rounded-lg text-xs font-bold"></div>
+
+          <button
+            type="submit"
+            class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-lg shadow text-xs uppercase tracking-wider transition"
+          >
+            Firmar con SHA-256 y Emitir Acta en Cloudflare D1
+          </button>
+        </form>
+      </section>
+
+      <section class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+          <div>
+            <span class="text-xs font-bold uppercase text-slate-500">Trazabilidad Forense y No Repudio</span>
+            <h3 class="text-base font-bold text-slate-900">Historial Inmutable de Actas Digitales (Cloudflare D1)</h3>
+          </div>
+          <span class="text-xs font-mono bg-slate-100 px-2.5 py-1 rounded border border-slate-300">Tabla: actas_inspeccion</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 uppercase">
+                <th class="py-2.5 px-3 font-bold">ID Acta</th>
+                <th class="py-2.5 px-3 font-bold">Puesto</th>
+                <th class="py-2.5 px-3 font-bold">Temp.</th>
+                <th class="py-2.5 px-3 font-bold">Dictamen</th>
+                <th class="py-2.5 px-3 font-bold">Hash SHA-256 (Audit Trail)</th>
+              </tr>
+            </thead>
+            <tbody id="actasTableBody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const session = await enforceRoleGuard(["INSPECTOR", "ADMIN"]);
+      if (!session) return;
+      document.body.classList.remove("hidden");
+
+      document.getElementById("inspectorNameDisplay").textContent = `${session.nombre} (DNI: ${session.dni})`;
+      document.getElementById("inspectorRoleBadge").textContent = `ROL: ${session.rol}`;
+      if (session.rol === "ADMIN") {
+        document.getElementById("adminSwitchLink").classList.remove("hidden");
+      }
+
+      let currentState = await loadSystemState();
+      const selectPuesto = document.getElementById("selectPuesto");
+      const tempInput = document.getElementById("tempInput");
+      const previewBox = document.getElementById("dictamenPreviewBox");
+      const previewText = document.getElementById("dictamenPreviewText");
+
+      function renderPuestoInfo() {
+        const code = selectPuesto.value;
+        const p = currentState.puestos.find((item) => item.codigo_puesto === code);
+        if (!p) return;
+        document.getElementById("infoCarnet").textContent = `${p.carnet_sanidad} (${p.carnet_estado})`;
+        document.getElementById("infoHmac").textContent = `${p.qr_hmac_signature.slice(0, 16)}... (VALIDO)`;
+        document.getElementById("infoSemaforoActual").textContent = p.semaforo_estado;
+      }
+
+      function updateTempPreview() {
+        const res = evaluateColdChainTemperature(tempInput.value);
+        previewText.textContent = res.label;
+        if (res.semaforo === "VERDE") {
+          previewBox.className = "p-4 rounded-lg border bg-emerald-50 border-emerald-300 text-xs space-y-1";
+          previewText.className = "text-sm font-bold text-emerald-900";
+        } else if (res.semaforo === "AMARILLO") {
+          previewBox.className = "p-4 rounded-lg border bg-amber-50 border-amber-300 text-xs space-y-1";
+          previewText.className = "text-sm font-bold text-amber-900";
+        } else {
+          previewBox.className = "p-4 rounded-lg border bg-red-50 border-red-300 text-xs space-y-1";
+          previewText.className = "text-sm font-bold text-red-900";
+        }
+        return res;
+      }
+
+      function renderActasTable() {
+        const tbody = document.getElementById("actasTableBody");
+        tbody.innerHTML = currentState.actas
+          .map((a) => {
+            const badgeClass =
+              a.dictamen === "CONFORME_VERDE"
+                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                : a.dictamen === "OBSERVADO_AMARILLO"
+                ? "bg-amber-100 text-amber-800 border-amber-300"
+                : "bg-red-100 text-red-800 border-red-300";
+            return `
+              <tr class="hover:bg-slate-50">
+                <td class="py-2.5 px-3 font-mono font-bold text-slate-900">${escapeHtml(a.id_acta)}</td>
+                <td class="py-2.5 px-3 font-semibold text-slate-800">${escapeHtml(a.codigo_puesto)}</td>
+                <td class="py-2.5 px-3 font-mono font-bold">${Number(a.temperatura_medida).toFixed(1)} C</td>
+                <td class="py-2.5 px-3">
+                  <span class="px-2 py-0.5 rounded border text-xs font-bold ${badgeClass}">
+                    ${escapeHtml(a.dictamen)}
+                  </span>
+                </td>
+                <td class="py-2.5 px-3 font-mono text-slate-500" title="${escapeHtml(a.audit_hash_sha256)}">
+                  ${escapeHtml(String(a.audit_hash_sha256).slice(0, 18))}...
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      selectPuesto.addEventListener("change", renderPuestoInfo);
+      tempInput.addEventListener("input", updateTempPreview);
+      renderPuestoInfo();
+      updateTempPreview();
+      renderActasTable();
+
+      document.getElementById("actaForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const evalRes = updateTempPreview();
+        const code = selectPuesto.value;
+        const temp = Number(tempInput.value);
+        const obs = document.getElementById("obsInput").value;
+        const idActa = `ACTA-2026-${Math.floor(10000 + Math.random() * 89999)}`;
+        const timestamp = new Date().toISOString();
+        const auditHash = await computeSha256Hex(`${idActa}|${code}|${session.dni}|${temp}|${evalRes.dictamen}|${timestamp}`);
+
+        const newActa = {
+          action: "EMITIR_ACTA",
+          id_acta: idActa,
+          codigo_puesto: code,
+          temperatura_medida: temp,
+          dictamen: evalRes.dictamen,
+          observaciones: obs,
+          audit_hash_sha256: auditHash
+        };
+
+        const res = await submitAuthorizedTransaction(newActa);
+        const fb = document.getElementById("actaFeedback");
+        if (res.ok) {
+          currentState = await loadSystemState();
+          renderPuestoInfo();
+          renderActasTable();
+          fb.textContent = `Acta ${idActa} firmada (${auditHash.slice(0, 12)}...). Semaforo del puesto ${code} actualizado a ${evalRes.semaforo}.`;
+          fb.className = "p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold";
+        } else {
+          fb.textContent = res.error || "Error al registrar acta.";
+          fb.className = "p-3 rounded-lg bg-red-50 border border-red-300 text-red-900 text-xs font-bold";
+        }
+        fb.classList.remove("hidden");
+      });
+    });
+  </script>
+</body>
+</html>

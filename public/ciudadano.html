@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <title>Consulta Publica del Comensal — PotaSegura</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+  <header class="bg-slate-900 text-white border-b-4 border-emerald-500 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-600 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Portal de Transparencia al Comensal (HU-10)</span>
+          <span class="bg-slate-800 text-slate-300 text-xs px-2.5 py-0.5 rounded border border-slate-700">Acceso Instantaneo via QR</span>
+        </div>
+        <h1 class="text-xl font-bold mt-1">Verificacion Ciudadana de Inocuidad y Autenticidad de Marisco</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-bold px-3.5 py-2 rounded transition">
+          Acceso Institucional (Login RBAC)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <span class="text-xs font-bold uppercase text-blue-700">Consulta de Codigo QR en Via Publica</span>
+        <h2 class="text-base font-bold text-slate-900">Seleccione el Puesto Ambulante Escaneado</h2>
+      </div>
+      <div class="w-full md:w-96">
+        <select id="citizenPuestoSelect" class="w-full px-3.5 py-2.5 text-xs font-bold border border-slate-300 rounded-lg bg-slate-50">
+          <option value="PUESTO-VMT-042">PUESTO-VMT-042 — Don Lucho (Zona A-12)</option>
+          <option value="PUESTO-VES-019">PUESTO-VES-019 — El Muelle (Zona B-04)</option>
+          <option value="PUESTO-SJM-007">PUESTO-SJM-007 — Ceviche SJM (Zona C-02)</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <section class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase text-slate-500">Ficha Oficial del Puesto Empadronado</span>
+            <h3 id="cNombrePuesto" class="text-lg font-bold text-slate-900 mt-0.5">Cargando informacion...</h3>
+            <p id="cUbicacionPuesto" class="text-xs text-slate-600"></p>
+          </div>
+          <div id="cSemaforoBanner" class="px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-center shadow-sm"></div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-blue-800">Certificado de Autenticidad de Especie Marina (HU-11)</span>
+            <span class="bg-blue-700 text-white text-xs font-bold px-2.5 py-0.5 rounded">TRANSPARENCIA</span>
+          </div>
+          <p id="cEspecieDeclarada" class="text-base font-bold text-slate-900">
+            100% Pota Nacional Fresca (Dosidicus gigas)
+          </p>
+          <p class="text-xs text-slate-700">
+            Este comercio declara honestamente la venta de calamar gigante nacional de alto valor proteico, garantizando que no existe sustitucion fraudulenta por otras especies de pescado.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+            <span class="font-bold uppercase text-slate-500 block">Trazabilidad de Origen (SANIPES)</span>
+            <div><strong>Terminal:</strong> <span id="cTerminal"></span></div>
+            <div><strong>Guia Compra:</strong> <span id="cGuia" class="font-mono"></span></div>
+            <div><strong>Ventana 6h:</strong> <span id="cVentana" class="font-mono font-bold"></span></div>
+          </div>
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+            <span class="font-bold uppercase text-slate-500 block">Ultima Fiscalizacion Municipal</span>
+            <div><strong>Temperatura:</strong> <span id="cTemp" class="font-mono font-bold"></span></div>
+            <div><strong>Carnet Sanidad:</strong> <span id="cCarnet" class="font-semibold"></span></div>
+            <div><strong>Firma QR HMAC:</strong> <span id="cHmac" class="font-mono text-emerald-700"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold uppercase text-red-700">EP-04: Participacion Ciudadana (HU-12)</span>
+          <h3 class="text-base font-bold text-slate-900 mt-0.5">Buzon de Alertas Sanitarias con Geocerca (&lt; 50m)</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            Para evitar denuncias falsas o sabotaje entre competidores, el sistema valida que el ciudadano se encuentre en un radio maximo de 50 metros de la carretilla.
+          </p>
+        </div>
+
+        <form id="denunciaForm" class="space-y-4">
+          <div>
+            <label for="motivoDenuncia" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Motivo de la Alerta Sanitaria
+            </label>
+            <select id="motivoDenuncia" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-slate-50">
+              <option value="Marisco tibio o sin hielo en el cooler">Marisco tibio o sin hielo en el cooler</option>
+              <option value="Falta de guantes o higiene deficiente">Falta de guantes o higiene deficiente</option>
+              <option value="Engano de especie (venta como otro pescado)">Engano de especie (venta como otro pescado)</option>
+              <option value="Malestar estomacal tras consumo">Malestar estomacal tras consumo</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="distanciaInput" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Distancia GPS Medida al Puesto (Metros — Maximo Permitido: 50 m)
+            </label>
+            <input
+              type="number"
+              id="distanciaInput"
+              step="1"
+              min="1"
+              max="500"
+              required
+              value="18"
+              class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono font-bold"
+            />
+          </div>
+
+          <div>
+            <label for="comentarioDenuncia" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Descripcion de la Evidencia
+            </label>
+            <textarea
+              id="comentarioDenuncia"
+              rows="3"
+              required
+              placeholder="Describa la observacion sanitaria detectada..."
+              class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"
+            >Se observa cooler expuesto al sol sin reposicion de hielo escamado.</textarea>
+          </div>
+
+          <div id="denunciaFeedback" class="hidden p-3 rounded-lg text-xs font-bold"></div>
+
+          <button
+            type="submit"
+            class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 px-4 rounded-lg shadow text-xs uppercase tracking-wider transition"
+          >
+            Validar Geocerca (&lt; 50m) y Enviar Alerta a Fiscalizacion
+          </button>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const select = document.getElementById("citizenPuestoSelect");
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("puesto")) {
+        select.value = params.get("puesto");
+      }
+
+      async function renderCitizenView() {
+        const code = select.value;
+        try {
+          const data = await loadPublicPuesto(code);
+          if (!data.ok || !data.puesto) return;
+          const p = data.puesto;
+          const l = data.lote;
+          const a = data.acta;
+
+          document.getElementById("cNombrePuesto").textContent = `${p.codigo_puesto} — ${p.comerciante_nombre}`;
+          document.getElementById("cUbicacionPuesto").textContent = `Ubicacion Autorizada: ${p.ubicacion_autorizada}`;
+          document.getElementById("cEspecieDeclarada").textContent = p.especie_declarada;
+
+          const banner = document.getElementById("cSemaforoBanner");
+          if (p.semaforo_estado === "VERDE") {
+            banner.textContent = "SEMAFORO VERDE: PUESTO APTO Y VERIFICADO";
+            banner.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-600 text-white";
+          } else if (p.semaforo_estado === "AMARILLO") {
+            banner.textContent = "SEMAFORO AMARILLO: EN OBSERVACION PREVENTIVA";
+            banner.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 text-white";
+          } else {
+            banner.textContent = "SEMAFORO ROJO: NO APTO / SELLO REVOCADO";
+            banner.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-red-600 text-white";
+          }
+
+          document.getElementById("cTerminal").textContent = l ? l.terminal_origen : "No registrado";
+          document.getElementById("cGuia").textContent = l ? l.comprobante_sanipes : "Sin guia";
+          document.getElementById("cVentana").textContent = l ? `${l.hora_compra} a ${l.hora_limite_6h} (${l.estado_lote})` : "N/A";
+          document.getElementById("cTemp").textContent = a ? `${Number(a.temperatura_medida).toFixed(1)} C` : "Pendiente";
+          document.getElementById("cCarnet").textContent = `${p.carnet_sanidad} (${p.carnet_estado})`;
+          document.getElementById("cHmac").textContent = `${p.qr_hmac_signature.slice(0, 16)}...`;
+        } catch (err) {
+          document.getElementById("cNombrePuesto").textContent = "Error al consultar el servicio publico.";
+        }
+      }
+
+      select.addEventListener("change", renderCitizenView);
+      await renderCitizenView();
+
+      document.getElementById("denunciaForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const code = select.value;
+        const motivo = document.getElementById("motivoDenuncia").value;
+        const dist = Number(document.getElementById("distanciaInput").value);
+        const comentario = document.getElementById("comentarioDenuncia").value;
+        const fb = document.getElementById("denunciaFeedback");
+
+        if (dist > 50) {
+          fb.textContent = `ALERTA RECHAZADA POR GEOCERCA: Su ubicacion (${dist} m) excede el radio maximo permitido de 50 metros respecto al puesto ${code}.`;
+          fb.className = "p-3 rounded-lg bg-red-50 border border-red-300 text-red-900 text-xs font-bold";
+          fb.classList.remove("hidden");
+          return;
+        }
+
+        const res = await submitPublicDenuncia({
+          codigo_puesto: code,
+          motivo,
+          comentario,
+          distancia_metros: dist
+        });
+
+        if (res.ok) {
+          fb.textContent = `Alerta ciudadana georreferenciada (${dist} m <= 50 m) registrada en Cloudflare D1 para inspeccion municipal prioritaria.`;
+          fb.className = "p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold";
+        } else {
+          fb.textContent = res.error || "Alerta rechazada por el servidor.";
+          fb.className = "p-3 rounded-lg bg-red-50 border border-red-300 text-red-900 text-xs font-bold";
+        }
+        fb.classList.remove("hidden");
+      });
+    });
+  </script>
+</body>
+</html>
