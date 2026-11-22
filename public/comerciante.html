@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <title>Modulo del Comerciante Empadronado — PotaSegura</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Panel del Comerciante — PotaSegura</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="hidden bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
@@ -12,19 +12,16 @@
   <header class="bg-blue-950 text-white border-b-4 border-blue-500 shadow">
     <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
-        <div class="flex items-center gap-2">
-          <span class="bg-blue-600 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Modulo Aislado: Comerciante</span>
-          <span id="userRoleBadge" class="bg-slate-800 text-blue-200 text-xs font-mono px-2.5 py-0.5 rounded border border-blue-700">ROL: CARRETILLERO</span>
-        </div>
-        <h1 class="text-xl font-bold mt-1">Panel de Custodia de Cadena de Frio y Distintivo QR Municipal</h1>
+        <span class="bg-blue-600 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Panel del Comerciante</span>
+        <h1 class="text-xl font-bold mt-1">Control Diario de Lote y Distintivo Municipal</h1>
       </div>
       <div class="flex items-center gap-3">
         <span id="userNameDisplay" class="text-xs text-slate-200 font-medium"></span>
         <a href="ciudadano.html?puesto=PUESTO-VMT-042" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded transition">
-          Ver Vista Publica de mi QR
+          Vista pública del puesto
         </a>
         <button onclick="clearActiveSession()" class="bg-red-700 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded transition">
-          Cerrar Sesion
+          Cerrar sesión
         </button>
       </div>
     </div>
@@ -33,11 +30,11 @@
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
     <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span class="text-xs font-bold uppercase text-blue-700">EP-01: Empadronamiento y Acreditacion Sanitaria (HU-01 / HU-02)</span>
-          <h2 id="puestoTitulo" class="text-lg font-bold text-slate-900 mt-0.5">PUESTO-VMT-042 — Luis Alberto Quispe (Cevicheria Don Lucho)</h2>
-          <p id="puestoUbicacion" class="text-xs text-slate-600">Ubicacion Autorizada: Cruce Av. Pachacutec con Jr. Progreso (Zona A-12)</p>
+          <span class="text-xs font-bold uppercase text-blue-700">Puesto Empadronado</span>
+          <h2 id="puestoTitulo" class="text-lg font-bold text-slate-900 mt-0.5">PUESTO-VMT-042 — Luis Alberto Quispe (Cevichería Don Lucho)</h2>
+          <p id="puestoUbicacion" class="text-xs text-slate-600">Ubicación autorizada: Cruce Av. Pachacútec con Jr. Progreso (Zona A-12)</p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <div class="px-3.5 py-2 rounded-lg bg-emerald-50 border border-emerald-300 text-xs">
@@ -45,7 +42,7 @@
             <span id="carnetCode" class="font-bold text-emerald-800">CS-MUNI-2026-8841 (VIGENTE)</span>
           </div>
           <div id="semaforoBadge" class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold uppercase tracking-wide shadow-sm">
-            SEMAFORO MUNICIPAL: VERDE (CONFORME)
+            ESTADO: VERDE (CONFORME)
           </div>
         </div>
       </div>
@@ -55,24 +52,24 @@
 
       <section class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="border-b border-slate-200 pb-3 mb-4">
-          <span class="text-xs font-bold uppercase text-amber-700">EP-02: Custodia de Cadena de Frio (HU-04 / HU-05 / HU-06)</span>
-          <h3 class="text-base font-bold text-slate-900 mt-0.5">Declaracion Matutina de Lote en Terminal Pesquero y Control de 6 Horas</h3>
+          <span class="text-xs font-bold uppercase text-amber-700">Abastecimiento y Conservación</span>
+          <h3 class="text-base font-bold text-slate-900 mt-0.5">Registro de Compra del Día y Cadena de Frío</h3>
         </div>
 
         <form id="loteForm" class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label for="terminalOrigen" class="block text-xs font-bold uppercase text-slate-700 mb-1">
-                Terminal Pesquero Mayorista (SANIPES)
+                Terminal Pesquero de Origen
               </label>
               <select id="terminalOrigen" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-slate-50">
-                <option value="Terminal Pesquero de Villa Maria del Triunfo">Terminal Pesquero de Villa Maria del Triunfo</option>
+                <option value="Terminal Pesquero de Villa Maria del Triunfo">Terminal Pesquero de Villa María del Triunfo</option>
                 <option value="Terminal Pesquero de Ventanilla">Terminal Pesquero de Ventanilla</option>
               </select>
             </div>
             <div>
               <label for="comprobanteSanipes" class="block text-xs font-bold uppercase text-slate-700 mb-1">
-                Nro. Guia / Comprobante de Compra
+                Nro. Guía / Comprobante de Compra
               </label>
               <input
                 type="text"
@@ -102,7 +99,7 @@
             </div>
             <div>
               <label for="horaCompra" class="block text-xs font-bold uppercase text-slate-700 mb-1">
-                Hora de Compra (T_compra)
+                Hora de Compra
               </label>
               <input
                 type="time"
@@ -114,7 +111,7 @@
             </div>
             <div>
               <label for="horasTranscurridas" class="block text-xs font-bold uppercase text-slate-700 mb-1">
-                Horas de Exposicion Actual
+                Horas Transcurridas
               </label>
               <input
                 type="number"
@@ -131,29 +128,29 @@
 
           <div id="ventana6hBox" class="p-4 rounded-lg border bg-emerald-50 border-emerald-300 text-xs space-y-1">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-800">Ventana Maxima de Consumo Seguro (T_limite = T_compra + 6h):</span>
+              <span class="font-bold text-slate-800">Hora límite de expendio seguro (6 horas):</span>
               <span id="horaLimiteDisplay" class="font-mono font-bold text-sm text-emerald-900">13:30 hrs</span>
             </div>
             <p id="ventanaMensaje" class="text-emerald-800 font-semibold">
-              Ventana Temporal Segura (&lt; 5.0 horas transcurridas).
+              Ventana temporal segura (&lt; 5.0 horas transcurridas).
             </p>
           </div>
 
           <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
             <span class="block text-xs font-bold uppercase text-slate-700">
-              Checklist Rapido de Apertura de Cooler en Carretilla (HU-06)
+              Verificación de Conservación en Cooler
             </span>
             <label class="flex items-center gap-2.5 text-xs text-slate-800 cursor-pointer">
               <input type="checkbox" id="chkHielo" checked class="rounded text-blue-600" />
-              <span><strong>Proporcion de Hielo 1:1:</strong> Marisco crudo cubierto con hielo escamado limpio en proporcion 1 a 1.</span>
+              <span><strong>Hielo en proporción 1:1:</strong> Marisco cubierto con hielo escamado limpio.</span>
             </label>
             <label class="flex items-center gap-2.5 text-xs text-slate-800 cursor-pointer">
               <input type="checkbox" id="chkDrenaje" checked class="rounded text-blue-600" />
-              <span><strong>Desague de Agua de Deshielo:</strong> Valvula de drenaje operativa evitando inmersion en agua estancada.</span>
+              <span><strong>Drenaje operativo:</strong> Evacuación continua de agua de deshielo.</span>
             </label>
             <label class="flex items-center gap-2.5 text-xs text-slate-800 cursor-pointer">
               <input type="checkbox" id="chkCooler" checked class="rounded text-blue-600" />
-              <span><strong>Aislamiento Termico:</strong> Cooler isotermico de pared gruesa con tapa hermetica libre de fisuras.</span>
+              <span><strong>Cierre hermético:</strong> Cooler isotérmico con tapa asegurada.</span>
             </label>
           </div>
 
@@ -163,7 +160,7 @@
             type="submit"
             class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg shadow text-xs uppercase tracking-wider transition"
           >
-            Registrar Lote y Actualizar Cadena de Frio en Cloudflare D1
+            Guardar Registro del Día
           </button>
         </form>
       </section>
@@ -171,15 +168,15 @@
       <section class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
         <div>
           <div class="border-b border-slate-200 pb-3 mb-4">
-            <span class="text-xs font-bold uppercase text-emerald-700">EP-01: Distintivo Oficial (HU-03 / HU-11)</span>
-            <h3 class="text-base font-bold text-slate-900 mt-0.5">Distintivo QR Municipal con Firma Criptografica</h3>
+            <span class="text-xs font-bold uppercase text-emerald-700">Acreditación Municipal</span>
+            <h3 class="text-base font-bold text-slate-900 mt-0.5">Distintivo QR del Puesto</h3>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-900 text-white text-center space-y-3">
             <span class="inline-block bg-emerald-600 text-white text-xs font-bold px-3 py-0.5 rounded-full uppercase">
-              100% Pota Nacional Fresca Declarada
+              100% Pota Nacional Fresca
             </span>
-            <p class="text-sm font-bold">PUESTO-VMT-042 — Cevicheria Don Lucho</p>
+            <p class="text-sm font-bold">PUESTO-VMT-042 — Cevichería Don Lucho</p>
 
             <div class="bg-white p-4 rounded-lg inline-block mx-auto shadow-inner">
               <svg class="w-40 h-40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -214,18 +211,12 @@
             </div>
 
             <div class="text-left bg-slate-800 p-3 rounded-lg text-xs font-mono space-y-1 border border-slate-700">
-              <div class="text-slate-400">FIRMA CRIPTOGRAFICA HMAC-SHA256:</div>
+              <div class="text-slate-400">CÓDIGO DE VERIFICACIÓN MUNICIPAL:</div>
               <div id="qrSignatureHash" class="text-emerald-400 break-all">
                 8f9d2a7e4b1c6f3a9e0d5b2c8a4f7e1d3b9c5a2e6f0d8b4a1c7e3f9d5b2a6c8e
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600 space-y-2">
-          <p>
-            <strong>Anti-Suplantacion STRIDE:</strong> El token QR incluye la firma criptografica del lote del dia. Si un puesto informal fotocopia este codigo sin lote activo o con temperatura &gt;= 8.0 C, el escaneo publico muestra alerta roja.
-          </p>
         </div>
       </section>
 
@@ -240,7 +231,6 @@
       document.body.classList.remove("hidden");
 
       document.getElementById("userNameDisplay").textContent = `${session.nombre} (DNI: ${session.dni})`;
-      document.getElementById("userRoleBadge").textContent = `ROL: ${session.rol}`;
 
       const horaInput = document.getElementById("horaCompra");
       const elapsedInput = document.getElementById("horasTranscurridas");
@@ -302,7 +292,7 @@
         const res = await submitAuthorizedTransaction(payload);
         const fb = document.getElementById("loteFeedback");
         if (res.ok) {
-          fb.textContent = `Lote ${idLote} registrado y firmado criptograficamente en Cloudflare D1 (${winRes.estadoLote}).`;
+          fb.textContent = `Lote ${idLote} registrado correctamente (${winRes.estadoLote}).`;
           fb.className = "p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold";
         } else {
           fb.textContent = res.error || "Error registrando lote.";
