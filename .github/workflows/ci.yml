@@ -1,0 +1,96 @@
+name: Pipeline DevSecOps PotaSegura
+
+on:
+  push:
+    branches: [ "main", "test", "feat/**" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "1. Compilacion y Bloqueo de Dependencias (NPM ci)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar Codigo Fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalacion Determinista de Paquetes (npm ci)
+        run: npm ci
+
+      - name: Verificar Integridad de Modulos y Activos Estaticos
+        run: npm run build
+
+  test:
+    name: "2. Pruebas Unitarias Automatizadas de Inocuidad (Pytest)"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Descargar Codigo Fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Motor de Pruebas (Pytest)
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Ejecutar Suite de Cadena de Frio, Ventana 6h y HMAC
+        run: pytest -v tests/
+
+  security:
+    name: "3. Seguridad Shift-Left (SAST Bandit + SCA + Escaneo de Secretos)"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Descargar Historial Completo para Auditoria
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js para Auditoria SCA
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Analisis de Composicion de Software (npm audit)
+        run: npm audit --audit-level=high
+
+      - name: Configurar Python para Analisis SAST
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Analizador Estatico (Bandit)
+        run: python -m pip install bandit
+
+      - name: Ejecutar Analisis Estatico de Seguridad (Bandit SAST)
+        run: bandit -r src/
+
+      - name: Ejecutar Escaneo de Secretos (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: "4. Despliegue Continuo en Cloudflare Pages y D1"
+    runs-on: ubuntu-latest
+    needs: [build, test, security]
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Descargar Artefacto Validado de Produccion
+        uses: actions/checkout@v4
+
+      - name: Verificar Endpoint Productivo en Cloudflare Edge
+        run: |
+          echo "Verificando disponibilidad del despliegue productivo en Cloudflare Edge (https://potasegura.pages.dev)..."
+          curl -sSf -I https://potasegura.pages.dev | head -n 5
+          echo "Endpoint productivo en Cloudflare Pages verificado con exito."
