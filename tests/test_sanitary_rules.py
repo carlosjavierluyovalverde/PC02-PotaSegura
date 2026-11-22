@@ -59,12 +59,12 @@ def test_six_hour_window_calculation_and_expiration():
 
 def test_hmac_sha256_qr_signature_integrity():
     """HU-03: El distintivo QR firmado con HMAC-SHA256 debe rechazar cualquier adulteracion."""
-    secret = "MUNI_SANIPES_SECRET_KEY_2026"
-    sig = generate_qr_hmac_signature("PUESTO-VMT-042", "LOTE-01", "GUIA-98412", secret)
+    fixture_seed = os.environ.get("QR_TEST_SEED", "test-fixture-value")
+    sig = generate_qr_hmac_signature("PUESTO-VMT-042", "LOTE-01", "GUIA-98412", fixture_seed)
     assert len(sig) == 64
-    assert verify_qr_hmac_signature("PUESTO-VMT-042", "LOTE-01", "GUIA-98412", sig, secret) is True
+    assert verify_qr_hmac_signature("PUESTO-VMT-042", "LOTE-01", "GUIA-98412", sig, fixture_seed) is True
     # Intento de suplantacion por puesto informal
-    assert verify_qr_hmac_signature("PUESTO-FALSO-99", "LOTE-01", "GUIA-98412", sig, secret) is False
+    assert verify_qr_hmac_signature("PUESTO-FALSO-99", "LOTE-01", "GUIA-98412", sig, fixture_seed) is False
 
 
 def test_geofence_proximity_anti_sabotage():

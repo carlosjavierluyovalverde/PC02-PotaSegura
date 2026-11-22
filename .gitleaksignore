@@ -1,0 +1,2 @@
+# Huella auditada y remediada en tests/test_sanitary_rules.py (reemplazada por variable de entorno QR_TEST_SEED)
+c5fa9928ca00761fe4dffe2bc7d3d76395e9c1cc:tests/test_sanitary_rules.py:generic-api-key:62
