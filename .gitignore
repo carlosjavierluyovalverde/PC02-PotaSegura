@@ -15,3 +15,4 @@ generate_csv.py
 download_skill.py
 jira_backlog_import.csv
 *.zip
+*.csv
