@@ -146,12 +146,18 @@ async function authenticateUser(email, password) {
     }
     return {
       ok: false,
-      error: data.error || "Credenciales invalidas o usuario no autorizado."
+      error: data.error || "Credenciales invalidas o usuario no autorizado.",
+      bloqueado: Boolean(data.bloqueado),
+      segundos_restantes: Number(data.segundos_restantes || 0),
+      intentos: Number(data.intentos || 0),
+      max_intentos: Number(data.max_intentos || 5)
     };
   } catch (e) {
     return {
       ok: false,
-      error: "No se pudo conectar con el servicio de autenticacion en el borde."
+      error: "No se pudo conectar con el servicio de autenticacion en el borde.",
+      bloqueado: false,
+      segundos_restantes: 0
     };
   }
 }
