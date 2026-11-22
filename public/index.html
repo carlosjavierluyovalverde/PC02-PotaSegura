@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <title>PotaSegura — Sistema Municipal de Trazabilidad e Inocuidad Sanitaria</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+  <!-- Barra Institucional Superior -->
+  <header class="bg-slate-900 text-white border-b-4 border-blue-600 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded uppercase tracking-wider">SANIPES / MUNI-SALUD</span>
+          <span class="bg-emerald-700 text-white text-xs font-semibold px-2.5 py-1 rounded">Cloudflare D1 SQL + Edge Workers</span>
+        </div>
+        <h1 class="text-2xl font-bold mt-1 tracking-tight">PotaSegura — Trazabilidad e Inocuidad de Marisco Crudo</h1>
+        <p class="text-xs text-slate-300">Control de Cadena de Frio (&lt; 5.0 C), Regla Temporal de 6 Horas y Autenticidad de Especie (Dosidicus gigas)</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="ciudadano.html" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold px-4 py-2.5 rounded-lg shadow transition">
+          Portal Publico del Comensal (Consulta QR)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+
+    <div id="alertBanner" class="hidden mb-6 p-4 rounded-lg border bg-red-50 border-red-300 text-red-900 text-sm font-medium"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Formulario de Autenticacion RBAC (Columna Izquierda: 5 cols) -->
+      <section class="lg:col-span-5 bg-white rounded-xl shadow-md border border-slate-200 p-6">
+        <div class="border-b border-slate-200 pb-4 mb-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Control de Acceso Basado en Roles (RBAC)</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Ingreso Institucional y de Comerciantes</h2>
+          <p class="text-xs text-slate-600 mt-1">
+            Arquitectura con separacion fisica de vistas HTML bajo el Principio de Menor Privilegio. Ingrese sus credenciales validas para acceder a su modulo autorizado.
+          </p>
+        </div>
+
+        <form id="loginForm" class="space-y-4" autocomplete="off">
+          <div>
+            <label for="emailInput" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Correo Electronico / Usuario
+            </label>
+            <input
+              type="email"
+              id="emailInput"
+              required
+              placeholder="ejemplo@munisanitaria.gob.pe"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label for="passwordInput" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Contrasena de Seguridad
+            </label>
+            <input
+              type="password"
+              id="passwordInput"
+              required
+              placeholder="Ingrese su contrasena"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label for="moduleTarget" class="block text-xs font-bold uppercase text-slate-700 mb-1">
+              Modulo de Destino (Para perfil Administrador)
+            </label>
+            <select
+              id="moduleTarget"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              <option value="AUTO">Redireccion Automatica segun Rol Asignado</option>
+              <option value="inspector.html">Modulo de Fiscalizacion Sanitaria (inspector.html)</option>
+              <option value="comerciante.html">Modulo de Carretillero Empadronado (comerciante.html)</option>
+              <option value="ciudadano.html">Modulo de Transparencia Ciudadana (ciudadano.html)</option>
+            </select>
+          </div>
+
+          <div id="loginError" class="hidden p-3 rounded-lg bg-red-50 border border-red-300 text-red-800 text-xs font-semibold"></div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg shadow transition text-sm"
+          >
+            Validar Credenciales e Iniciar Sesion
+          </button>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-200">
+          <p class="text-xs text-slate-600 mb-2">
+            <strong>Consulta Ciudadana Directa (HU-10):</strong> Los comensales que escanean el codigo QR de una carretilla en la via publica no requieren cuenta ni descarga de aplicacion.
+          </p>
+          <a
+            href="ciudadano.html"
+            class="block text-center w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 px-4 rounded-lg border border-slate-300 text-xs transition"
+          >
+            Ir directamente a la Vista Publica del Comensal (ciudadano.html)
+          </a>
+        </div>
+      </section>
+
+      <!-- Panel de Credenciales de Auditoria y Arquitectura (Columna Derecha: 7 cols) -->
+      <section class="lg:col-span-7 space-y-6">
+
+        <!-- Tabla de Credenciales Validas para Evaluacion -->
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Guia para Evaluacion Academica</span>
+              <h3 class="text-lg font-bold text-slate-900">Credenciales Validas Registradas en Cloudflare D1</h3>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-700 font-mono px-2.5 py-1 rounded border border-slate-300">Tabla: usuarios</span>
+          </div>
+
+          <p class="text-xs text-slate-600 mb-4">
+            Para efectos de revision del docente y auditoria de pruebas, digite o copie cualquiera de las siguientes credenciales habilitadas en la base de datos distribuida Cloudflare D1:
+          </p>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 uppercase">
+                  <th class="py-2.5 px-3 font-bold">Rol RBAC</th>
+                  <th class="py-2.5 px-3 font-bold">Correo / Usuario</th>
+                  <th class="py-2.5 px-3 font-bold">Contrasena</th>
+                  <th class="py-2.5 px-3 font-bold">Modulo HTML Aislado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr class="hover:bg-slate-50">
+                  <td class="py-2.5 px-3 font-bold text-blue-800">CARRETILLERO</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">carretillero@potasegura.pe</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">Pota2026!</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-600">comerciante.html</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-2.5 px-3 font-bold text-emerald-800">INSPECTOR</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">inspector@munisanitaria.gob.pe</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">Inspector2026!</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-600">inspector.html</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-2.5 px-3 font-bold text-purple-800">ADMIN</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">admin@munisanitaria.gob.pe</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">Admin2026!</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-600">Acceso Total (3 Modulos)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-2.5 px-3 font-bold text-slate-700">COMENSAL</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">ciudadano@gmail.com</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-900 select-all">Ciudadano2026!</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-600">ciudadano.html (o Libre)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Resumen de Controles de Seguridad y Arquitectura -->
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-200 pb-2 mb-3">
+            Arquitectura de Seguridad y Reglas Sanitarias Implementadas
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-900 mb-1">1. Aislamiento Fisico de Vistas HTML</p>
+              <p class="text-slate-600">
+                Cada actor opera en un documento HTML separado (<code class="font-mono">comerciante.html</code>, <code class="font-mono">inspector.html</code>, <code class="font-mono">ciudadano.html</code>) con guardas de sesion RBAC que impiden la escalada de privilegios por manipulacion del DOM.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-900 mb-1">2. Custodia Termica y Regla de 6 Horas</p>
+              <p class="text-slate-600">
+                Control matematico de ventana de consumo seguro (<code class="font-mono">T_limite = T_compra + 6h</code>) desde la adquisicion en terminal pesquero (SANIPES) y verificacion in situ &lt; 5.0 C.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-900 mb-1">3. Firma Criptografica SHA-256 / HMAC</p>
+              <p class="text-slate-600">
+                Cada distintivo QR municipal y cada acta digital de fiscalizacion genera un hash criptografico verificable en tiempo real para impedir falsificaciones o repudio.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <p class="font-bold text-slate-900 mb-1">4. Persistencia Relacional Cloudflare D1</p>
+              <p class="text-slate-600">
+                Consultas SQL parametrizadas sobre Cloudflare D1 (<code class="font-mono">potasegura-db</code>) desplegadas en el borde mediante Cloudflare Pages Functions.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Pie de Pagina Institucional -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-4 border-t border-slate-800 mt-10">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <span>Proyecto Final de Carrera III (PFC3) — Practica Calificada 2 (Caso: Vendedores de Ceviche de Pota)</span>
+      <span>Autor: Carlos Javier Luyo Valverde | Stack: Cloudflare Pages, Workers &amp; D1 SQL</span>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("auth_error") === "unauthorized_role") {
+        const banner = document.getElementById("alertBanner");
+        banner.textContent = "Acceso denegado por Control de Acceso Basado en Roles (RBAC): Debe iniciar sesion con credenciales autorizadas para acceder a ese modulo.";
+        banner.classList.remove("hidden");
+      }
+
+      const form = document.getElementById("loginForm");
+      const errorBox = document.getElementById("loginError");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorBox.classList.add("hidden");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Verificando credenciales en Cloudflare D1...";
+
+        const email = document.getElementById("emailInput").value;
+        const pass = document.getElementById("passwordInput").value;
+        const target = document.getElementById("moduleTarget").value;
+
+        const result = await authenticateUser(email, pass);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Validar Credenciales e Iniciar Sesion";
+
+        if (!result.ok) {
+          errorBox.textContent = result.error;
+          errorBox.classList.remove("hidden");
+          return;
+        }
+
+        const rol = result.user.rol;
+        if (target !== "AUTO" && rol === "ADMIN") {
+          window.location.href = target;
+          return;
+        }
+
+        if (rol === "CARRETILLERO") {
+          window.location.href = "comerciante.html";
+        } else if (rol === "INSPECTOR") {
+          window.location.href = "inspector.html";
+        } else if (rol === "ADMIN") {
+          window.location.href = "inspector.html";
+        } else {
+          window.location.href = "ciudadano.html";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
