@@ -1,0 +1,17 @@
+# Dependencias y artefactos locales
+node_modules/
+__pycache__/
+.pytest_cache/
+.wrangler/
+.env
+.env.local
+*.pyc
+
+# Documentos academicos del informe local (no se suben al repositorio de codigo en GitHub)
+INFORME_PC02_LUYO_VALVERDE.md
+docs/
+.skills/
+generate_csv.py
+download_skill.py
+jira_backlog_import.csv
+*.zip

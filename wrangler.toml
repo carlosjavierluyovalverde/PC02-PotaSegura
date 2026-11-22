@@ -1,0 +1,8 @@
+name = "potasegura"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "potasegura-db"
+database_id = "f01f321d-25ff-4dae-a8dd-7c8ff029c57a"
